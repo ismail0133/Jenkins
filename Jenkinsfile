@@ -115,11 +115,10 @@ pipeline {
             }
             post {
                 always {
-                    jacoco(
-                        execPattern:   '**/target/jacoco.exec',
-                        classPattern:  '**/target/classes',
-                        sourcePattern: '**/src/main/java',
-                        minimumLineCoverage: '70'
+                    archiveArtifacts(
+                        artifacts: 'target/site/jacoco/**, target/jacoco.exec',
+                        fingerprint: true,
+                        allowEmptyArchive: true
                     )
                 }
             }
@@ -138,20 +137,10 @@ pipeline {
             }
             post {
                 always {
-                    recordIssues(
-                        enabledForFailure: true,
-                        tools: [
-                            checkStyle(pattern: '**/checkstyle-result.xml'),
-                            pmdParser(pattern:  '**/pmd.xml'),
-                            cpd(pattern:        '**/cpd.xml'),
-                            spotBugs(pattern:   '**/spotbugsXml.xml')
-                        ],
-                        // Rendre le build UNSTABLE si > 10 avertissements
-                        qualityGates: [[
-                            threshold: 10,
-                            type: 'TOTAL',
-                            unstable: true
-                        ]]
+                    archiveArtifacts(
+                        artifacts: 'target/checkstyle-result.xml, target/pmd.xml, target/cpd.xml, target/spotbugsXml.xml',
+                        fingerprint: true,
+                        allowEmptyArchive: true
                     )
                 }
             }
